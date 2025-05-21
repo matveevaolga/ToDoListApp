@@ -8,31 +8,30 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State var email = ""
-    @State var password = ""
+    @StateObject var viewModel = LoginViewViewModel()
     var body: some View {
         NavigationView {
             VStack {
-                // Header
-                HeaderView()
-                // Login Form
+                HeaderView(title: "To-Do List", subTitle: "Productivity app", angle: 0, background: .purple, titleColor: .yellow).offset(y: -5)
                 Form {
-                    TextField("Email", text: $email).textFieldStyle(RoundedBorderTextFieldStyle())
-                    SecureField("Password", text: $password)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                    Button {}
-                    label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10).foregroundColor(.purple)
-                            Text("Sign In").foregroundColor(.white).bold()
-                        }
+                    if !viewModel.errorMessage.isEmpty {
+                        Text(viewModel.errorMessage).foregroundColor(.red)
                     }
+                    TextField("Email", text: $viewModel.email).textFieldStyle(RoundedBorderTextFieldStyle()).autocapitalization(/*@START_MENU_TOKEN@*/.none/*@END_MENU_TOKEN@*/).autocorrectionDisabled()
+                    SecureField("Password", text: $viewModel.password)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    HStack {
+                        Spacer()
+                        FormButton(title: "Sign In", background: .purple) {
+                            viewModel.login()
+                        }
+                        Spacer()
+                    }.offset(y: 20)
                 }
-                // CreateAccount
                 VStack {
                     Text("Don't have an account yet?")
                     NavigationLink("Sign Up",destination: RegisterView())
-                }.padding(.bottom, 30)
+                }.padding(.bottom, 30).offset(y: -30)
                 Spacer()
             }
         }
